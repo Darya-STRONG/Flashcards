@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bigelow+Rules&family=Nunito:wght@200&family=Open+Sans:wght@300&display=swap');
+        *{
+            padding: 0;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            background-color: rgb(214, 107, 148);
+        }
+
+        header {
+            background-color: white;
+            border-radius: 30px;
+        }
+        button {
+            padding: 8px;
+            outline: none;
+            cursor: pointer;
+            border: 1px solid  lightgrey;
+            border-radius: 5px;
+            background-color:  rgb(214, 107, 148);
+        }
+        button:hover {
+            background-color: rgb(217, 145, 173);
+        }
+
+        .container {
+            width: 95%;
+            margin: auto;
+        } 
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin: auto;
+            padding: 20px 0 ;
+            background-color: white;
+        }
+        .nav button {
+            font-family: inherit;
+        }
+        .create-box{
+            width: 380px;
+            margin: auto;
+            padding: 20px;
+            margin-top:10px;
+            border-radius: 5px;
+            background-color: whitesmoke;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .create-box textarea {
+            width: 100%;
+            border-radius: 5px;
+            font-family: inherit;
+            border:  1px solid lightgray;
+            padding-left:5px; 
+            padding-top: 5px;
+        }
+        .create-box button {
+            width: fit-content;
+        }
+        .flashcards {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start  ;
+            flex-wrap: wrap;
+            width: 100%;
+            margin: auto;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .flashcard {
+            width: 370px;
+            height: 200px;
+            word-wrap: break-word;
+            margin: 10px;
+            background-color: white;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+        }
+        .flashcard h2 {
+            font-size: 1rem;
+        }
+        @media(max-width:768px){
+            .flashcard{
+                margin: auto;
+                margin-top:10px;
+                margin-bottom: 10px;
+            }
+        }
+        @media(max-width:480px) {
+            .nav{
+                flex-direction: column;
+                align-items: center;
+            }
+            .create-box{
+                width: 100%;
+            }
+            .flashcard{
+                width: 100%;
+            }
+        }
+    </style> 
+</head>
+<body>
+    
+    <header>
+          <div class="container">
+            <div class="nav">
+                <h1>Flashcards</h1>
+                 <div>
+                    <button onclick="showCreateCardBox()">New Card</button>
+                    <button onclick="delFlashcards()">Del Cards</button>
+                </div>
+            </div>
+
+          </div>
+    </header>
+
+    <div class="container">
+        <div class="create-box">
+            <h2 style="text-align:center; color:black;">Create Flashcard</h2>
+            <label for="question">Question</label>
+            <textarea id="question"></textarea>
+            <br>
+            <label for="answer">Answer</label>
+            <textarea id="answer"></textarea>
+            <div>
+                <button onclick="addFlashcard()">Save</button>
+                <button onclick="hideCreateBox()">Close</button>
+            </div>
+        </div>
+        <div class="flashcards"></div>
+
+    </div>
+
+    <script>
+        
+     const flashcards = document.getElementsByClassName("flashcards")[0];  
+     const createBox = document.getElementsByClassName("create-box")[0];
+     const question = document.getElementById("question");   
+     const answer = document.getElementById("answer");   
+     let contentArray = localStorage.getItem('items') ? JSON.parse(localStorage.getItem('items')):[];
+
+    contentArray.forEach(divMaker);
+    function divMaker(text){
+        let div = document.createElement("div");
+        let h2_question = document.createElement("h2");
+        let h2_answer = document.createElement("h2");
+        
+        div.className = "flashcard";
+        
+        h2_question.setAttribute('style',"border-top:1px solid  rgb(214, 107, 148); padding:15px; margin-top:30px");
+        
+        h2_question.innerHTML = text.my_question;
+        
+        h2_answer.setAttribute('style','text-align:center; display:none; color: green');
+        h2_answer.innerHTML = text.my_answer;
+
+        div.appendChild(h2_question);
+        div.appendChild(h2_answer);
+
+        div.addEventListener("click", function(){
+            if(h2_answer.style.display == "none")
+                h2_answer.style.display = "block";
+            else
+                h2_answer.style.display = "none";    
+        });
+        flashcards.appendChild(div);
+        
+    }
+
+    function addFlashcard(){
+        let flashcard_info = {
+            'my_question' : question.value,
+            'my_answer' : answer.value,
+        }
+        contentArray.push(flashcard_info);
+        localStorage.setItem('items', JSON.stringify(contentArray));
+        divMaker(contentArray[contentArray.length  - 1]);
+        question.value = '';
+        answer.value = '';
+    } 
+
+    function delFlashcards(){
+        localStorage.clear();
+        flashcards.innerHTML = '';
+        contentArray = [];
+    }
+
+    function showCreateCardBox(){
+        createBox.style.display = 'block';
+    }
+    
+    function hideCreateBox(){
+        createBox.style.display = "none";
+    }
+
+    </script
+</body>
+</html>
